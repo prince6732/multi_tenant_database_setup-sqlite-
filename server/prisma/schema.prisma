@@ -1,0 +1,294 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model states {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name       String    @db.VarChar(30)
+  status     Boolean   @default(false)
+  deleted_at DateTime? @db.Timestamp(0)
+  cities     cities[]
+}
+
+model subscription_types {
+  id            BigInt                      @id @default(autoincrement()) @db.UnsignedBigInt
+  name          String                      @db.VarChar(20)
+  price         Decimal                     @db.Decimal(7, 2)
+  duration      subscription_types_duration
+  status        Boolean                     @default(false)
+  created_at    DateTime?                   @db.Timestamp(0)
+  updated_at    DateTime?                   @db.Timestamp(0)
+  subscriptions subscriptions[]
+  tenants       tenants[]
+}
+
+enum subscription_types_duration {
+  week
+  month
+  halfYear
+  Year
+}
+
+model cities {
+  id                 BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  name               String               @db.VarChar(30)
+  state_id           BigInt               @db.UnsignedBigInt
+  pincode            String?              @db.VarChar(6)
+  status             Boolean              @default(true)
+  deleted_at         DateTime?            @db.Timestamp(0)
+  states             states               @relation(fields: [state_id], references: [id], onUpdate: NoAction, map: "cities_state_id_foreign")
+  tenants            tenants[]
+  transport_requests transport_requests[]
+
+  @@index([state_id], map: "cities_state_id_index")
+}
+
+model tenants {
+  id                   BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  name                 String?             @db.VarChar(50)
+  prefix               String?             @db.VarChar(20)
+  dbname               String              @db.VarChar(50)
+  email                String?             @unique(map: "tenants_email_unique") @db.VarChar(255)
+  activated_at         DateTime?           @db.Timestamp(0)
+  deactivated_at       DateTime?           @db.Timestamp(0)
+  image                String?             @db.VarChar(60)
+  status               Boolean             @default(false)
+  subscription_type_id BigInt?             @db.UnsignedBigInt
+  city_id              BigInt              @db.UnsignedBigInt
+  created_at           DateTime?           @db.Timestamp(0)
+  updated_at           DateTime?           @db.Timestamp(0)
+  subscriptions        subscriptions[]
+  cities               cities              @relation(fields: [city_id], references: [id], onUpdate: NoAction, map: "tenants_city_id_foreign")
+  subscription_types   subscription_types? @relation(fields: [subscription_type_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "tenants_subscription_type_id_foreign")
+  users                users[]
+
+  @@index([city_id], map: "tenants_city_id_index")
+  @@index([subscription_type_id], map: "tenants_subscription_type_id_foreign")
+}
+
+model users {
+  id                 BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  name               String               @db.VarChar(25)
+  email              String?              @unique(map: "users_email_unique") @db.VarChar(25)
+  email_verified_at  DateTime?            @db.Timestamp(0)
+  password           String?              @db.VarChar(100)
+  phone              String?              @db.VarChar(15)
+  provider           users_provider?
+  provider_id        String?              @unique(map: "users_provider_id_unique") @db.VarChar(50)
+  is_primary         Boolean              @default(false)
+  verification_code  String?              @db.VarChar(10)
+  remember_token     String?              @db.VarChar(100)
+  status             Boolean              @default(true)
+  tenant_id          BigInt?              @db.UnsignedBigInt
+  created_at         DateTime?            @db.Timestamp(0)
+  updated_at         DateTime?            @db.Timestamp(0)
+  admins             admins[]
+  subscriptions      subscriptions[]
+  transport_requests transport_requests[]
+  tenants            tenants?             @relation(fields: [tenant_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "users_tenant_id_foreign")
+
+  @@index([tenant_id], map: "users_tenant_id_foreign")
+}
+
+enum users_provider {
+  google
+  facebook
+  twitter
+  github
+}
+
+model password_reset_tokens {
+  email      String    @id @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+}
+
+model sessions {
+  id            String  @id @db.VarChar(255)
+  user_id       BigInt? @db.UnsignedBigInt
+  ip_address    String? @db.VarChar(45)
+  user_agent    String? @db.Text
+  payload       String  @db.LongText
+  last_activity Int
+
+  @@index([last_activity], map: "sessions_last_activity_index")
+  @@index([user_id], map: "sessions_user_id_index")
+}
+
+model admins {
+  id      BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id BigInt? @db.UnsignedBigInt
+  status  Boolean
+  users   users?  @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "admins_user_id_foreign")
+
+  @@index([status], map: "admins_status_index")
+  @@index([user_id], map: "admins_user_id_foreign")
+}
+
+model password_resets {
+  email      String?   @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+
+  @@index([email], map: "password_resets_email_index")
+  @@ignore
+}
+
+model settings {
+  key    String  @unique(map: "settings_key_unique") @db.VarChar(50)
+  value  String  @db.MediumText
+  status Boolean @default(false)
+}
+
+model subscriptions {
+  id                   BigInt                      @id @default(autoincrement()) @db.UnsignedBigInt
+  payement_mode        subscriptions_payement_mode
+  transaction_id       String?                     @db.VarChar(50)
+  transaction_details  String?                     @db.VarChar(256)
+  tenant_id            BigInt                      @db.UnsignedBigInt
+  user_id              BigInt                      @db.UnsignedBigInt
+  subscription_type_id BigInt                      @db.UnsignedBigInt
+  price                Decimal                     @db.Decimal(7, 2)
+  status               Boolean                     @default(false)
+  activated_at         DateTime?                   @db.Timestamp(0)
+  deactivated_at       DateTime?                   @db.Timestamp(0)
+  created_at           DateTime?                   @db.Timestamp(0)
+  updated_at           DateTime?                   @db.Timestamp(0)
+  deleted_at           DateTime?                   @db.Timestamp(0)
+  subscription_types   subscription_types          @relation(fields: [subscription_type_id], references: [id], onUpdate: NoAction, map: "subscriptions_subscription_type_id_foreign")
+  tenants              tenants                     @relation(fields: [tenant_id], references: [id], onUpdate: NoAction, map: "subscriptions_tenant_id_foreign")
+  users                users                       @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "subscriptions_user_id_foreign")
+
+  @@index([subscription_type_id], map: "subscriptions_subscription_type_id_index")
+  @@index([tenant_id], map: "subscriptions_tenant_id_index")
+  @@index([user_id], map: "subscriptions_user_id_index")
+}
+
+enum subscriptions_payement_mode {
+  bankTransfer
+  cash
+  card
+  upi
+}
+
+model transport_requests {
+  id         BigInt                    @id @default(autoincrement()) @db.UnsignedBigInt
+  request_id String                    @unique @db.Char(36)
+  name       String                    @db.VarChar(60)
+  user_id    BigInt?                   @db.UnsignedBigInt
+  city_id    BigInt                    @db.UnsignedBigInt
+  contact    String                    @db.VarChar(15)
+  message    String?                   @db.Text
+  status     transport_requests_status @default(fresh)
+  created_at DateTime?                 @db.Timestamp(0)
+  updated_at DateTime?                 @db.Timestamp(0)
+  cities     cities                    @relation(fields: [city_id], references: [id], onUpdate: NoAction, map: "transport_requests_city_id_foreign")
+  users      users?                    @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "transport_requests_user_id_foreign")
+
+  @@index([city_id], map: "transport_requests_city_id_index")
+  @@index([user_id], map: "transport_requests_user_id_foreign")
+}
+
+enum transport_requests_status {
+  fresh
+  completed
+  rejected
+}
+
+model load_entries {
+  id               BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  truck_num        String?   @db.VarChar(30)
+  model            String?   @db.VarChar(255)
+  chassi           String?   @db.VarChar(20)
+  engine_number    String?   @db.VarChar(20)
+  owner_name       String?   @db.VarChar(100)
+  owner_number     String?   @db.VarChar(30)
+  owner_addr       String?   @db.Text
+  pan              String?   @db.VarChar(30)
+  driver_name      String    @db.VarChar(30)
+  driver_number    String    @db.VarChar(30)
+  driver_transport String    @db.VarChar(30)
+  trans_number     String?   @db.VarChar(30)
+  trans_city       String?   @db.VarChar(30)
+  driver_image     String?   @db.VarChar(30)
+  insurance        String?   @db.VarChar(30)
+  route_from       String?   @db.VarChar(30)
+  route_to         String?   @db.VarChar(30)
+  party_id         String?   @db.VarChar(50)
+  pickup_name      String?   @db.VarChar(50)
+  pickup_number    String?   @db.VarChar(50)
+  pickup_addr      String?   @db.VarChar(50)
+  deliver_name     String?   @db.VarChar(15)
+  deliver_no       String?   @db.VarChar(15)
+  deliver_addr     String?   @db.VarChar(15)
+  created_at       DateTime? @db.Timestamp(0)
+  updated_at       DateTime? @db.Timestamp(0)
+}
+
+model contact_uses {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name       String    @db.VarChar(255)
+  email      String    @db.VarChar(255)
+  phone      String    @db.VarChar(255)
+  message    String    @db.Text
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+}
+
+model cache {
+  key        String @id @db.VarChar(255)
+  value      String @db.MediumText
+  expiration Int
+}
+
+model cache_locks {
+  key        String @id @db.VarChar(255)
+  owner      String @db.VarChar(255)
+  expiration Int
+}
+
+model failed_jobs {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
+  connection String   @db.Text
+  queue      String   @db.Text
+  payload    String   @db.LongText
+  exception  String   @db.LongText
+  failed_at  DateTime @default(now()) @db.Timestamp(0)
+}
+
+model job_batches {
+  id             String  @id @db.VarChar(255)
+  name           String  @db.VarChar(255)
+  total_jobs     Int
+  pending_jobs   Int
+  failed_jobs    Int
+  failed_job_ids String  @db.LongText
+  options        String? @db.MediumText
+  cancelled_at   Int?
+  created_at     Int
+  finished_at    Int?
+}
+
+model jobs {
+  id           BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  queue        String @db.VarChar(255)
+  payload      String @db.LongText
+  attempts     Int    @db.UnsignedTinyInt
+  reserved_at  Int?   @db.UnsignedInt
+  available_at Int    @db.UnsignedInt
+  created_at   Int    @db.UnsignedInt
+
+  @@index([queue], map: "jobs_queue_index")
+}
