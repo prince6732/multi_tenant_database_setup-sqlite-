@@ -89,7 +89,7 @@ module.exports = {
         },
       ]);
     } else {
-      console.log("✅ Expense types table is already seeded");
+      console.log("Expense types table is already seeded");
     }
   },
 

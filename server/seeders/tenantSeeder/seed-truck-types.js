@@ -161,7 +161,7 @@ module.exports = {
         },
       ]);
     } else {
-      console.log("✅ Truck types table is already seeded");
+      console.log("Truck types table is already seeded");
     }
   },
 

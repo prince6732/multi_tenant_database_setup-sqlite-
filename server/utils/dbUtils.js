@@ -3,6 +3,7 @@ const { Sequelize } = require("sequelize");
 const path = require("path");
 const fs = require("fs");
 
+// create sqlite database for tenant
 const createTenantDatabase = async (dbName) => {
   const dbDir = path.resolve(__dirname, "../databases/tenantsDB");
   const dbFilePath = path.join(dbDir, `${dbName}.sqlite`);
@@ -32,6 +33,7 @@ const createTenantDatabase = async (dbName) => {
   }
 };
 
+// tenant model migrations
 const runTenantMigrations = (dbName) => {
   const dbFilePath = path.resolve(
     __dirname,
@@ -50,16 +52,24 @@ const runTenantMigrations = (dbName) => {
   }
 };
 
+// tenant seeder
 const runTenantSeeders = (dbName) => {
   const dbFilePath = path.resolve(
     __dirname,
     `../databases/tenantsDB/${dbName}.sqlite`
   );
-  const seedPath = path.resolve("seeders/tenant");
+  const tenantSeedPath = path.resolve("seeders/tenantSeeder"); // tenant seeder
+  const commonSeedPath = path.resolve("seeders/commonSeeder"); // common seeder
 
   try {
+    // execute cmd for tenant seeder
     execSync(
-      `npx sequelize-cli db:seed:all --url sqlite:${dbFilePath} --seeders-path ${seedPath}`,
+      `npx sequelize-cli db:seed:all --url sqlite:${dbFilePath} --seeders-path ${tenantSeedPath}`,
+      { stdio: "inherit" }
+    );
+    // execute cmd for common seeder
+    execSync(
+      `npx sequelize-cli db:seed:all --url sqlite:${dbFilePath} --seeders-path ${commonSeedPath}`,
       { stdio: "inherit" }
     );
   } catch (err) {

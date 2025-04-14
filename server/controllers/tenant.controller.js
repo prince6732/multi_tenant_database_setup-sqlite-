@@ -1,4 +1,7 @@
 const prisma = require("../prisma/prismaClient/prismaClient");
+const { Sequelize } = require("sequelize");
+const bcrypt = require("bcrypt");
+const path = require("path");
 
 const {
   createTenantDatabase,
@@ -7,16 +10,17 @@ const {
 } = require("../utils/dbUtils");
 
 const activateUser = async (req, res) => {
-  const { name, dbname, email, subscription_type_id, prefix } = req.body;
+  const { name, password, dbname, email, subscription_type_id, prefix } =
+    req.body;
 
   try {
     // Create tenant DB
     const dbName = `${prefix}_${dbname}`;
-
     await createTenantDatabase(dbName);
     runTenantMigrations(dbName);
     runTenantSeeders(dbName);
 
+    // Save tenant record in main DB using Prisma
     const tenant = await prisma.tenants.create({
       data: {
         name,
@@ -30,6 +34,28 @@ const activateUser = async (req, res) => {
         city_id: 1,
       },
     });
+
+    // Connect to the new tenant DB (SQLite)
+    const dbFilePath = path.resolve(
+      __dirname,
+      `../databases/tenantsDB/${dbName}.sqlite`
+    );
+    const tenantSequelize = new Sequelize({
+      dialect: "sqlite",
+      storage: dbFilePath,
+    });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert new user into tenant DB in user table
+    await tenantSequelize.query(
+      `INSERT INTO users (name, email, password, is_primary) VALUES (?, ?, ?, ?)`,
+      {
+        replacements: [name, email, hashedPassword, true],
+      }
+    );
+
+    await tenantSequelize.close();
 
     return res.json({
       res: "success",

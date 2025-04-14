@@ -19,13 +19,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
-      deletedAt: {
-        type: DataTypes.DATE,
-      },
     },
     {
       tableName: "cities",
-      timestamps: true,
+      timestamps: false,
       paranoid: true,
       underscored: true,
     }

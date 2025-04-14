@@ -59,7 +59,7 @@ module.exports = {
         },
       ]);
     } else {
-      console.log("✅ Employee types table is already seeded");
+      console.log("Employee types table is already seeded");
     }
   },
 
