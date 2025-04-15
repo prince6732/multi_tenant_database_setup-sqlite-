@@ -8,14 +8,11 @@ import { User } from '../../models/user.model';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [
-    RouterLink,
-    CommonModule
-  ],
+  imports: [RouterLink, CommonModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrl: './header.component.css',
 })
-export class HeaderComponent implements OnInit{
+export class HeaderComponent implements OnInit {
   toggleStatus: boolean = false;
   user!: User;
   isProfileDropdownOpen = false;
@@ -25,7 +22,7 @@ export class HeaderComponent implements OnInit{
     private router: Router,
     private toggleService: ToggleClassService
   ) {
-    this.toggleService.currentStatus.subscribe(status => {
+    this.toggleService.currentStatus.subscribe((status) => {
       this.toggleStatus = status;
     });
   }
@@ -69,7 +66,7 @@ export class HeaderComponent implements OnInit{
 
   logout(): void {
     this.tokenStorageService.signOut();
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 
   toggle() {

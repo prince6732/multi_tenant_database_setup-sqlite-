@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
             setTimeout(() => {
               this.isProcessing = false;
               this.isLoggedIn = true;
-              this.router.navigate(['/uf-admin']);
+              this.router.navigate(['']);
             }, Math.floor(Math.random() * 1000) + 1000);
           }
         },

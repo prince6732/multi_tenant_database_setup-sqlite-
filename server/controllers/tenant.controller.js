@@ -10,7 +10,7 @@ const {
 } = require("../utils/dbUtils");
 
 const activateUser = async (req, res) => {
-  const { name, password, dbname, email, subscription_type_id, prefix } =
+  const { name, password, dbname, email, subscription_type_id, prefix, request_id } =
     req.body;
 
   try {
@@ -32,6 +32,26 @@ const activateUser = async (req, res) => {
         deactivated_at: new Date(),
         status: true,
         city_id: 1,
+      },
+    });
+
+    // update admin user table // append tenant id
+    await prisma.users.update({
+      where: {
+        email: email,
+      },
+      data: {
+        tenant_id: tenant.id,
+      },
+    });
+
+    // update status of tranport request
+    await prisma.transport_requests.update({
+      where: {
+        request_id: request_id,
+      },
+      data: {
+        status: "completed",
       },
     });
 

@@ -2,22 +2,74 @@
     <div class="h-full px-3 pb-4 bg-white dark:bg-gray-800">
         <ul class="space-y-2 font-medium">
             <li class="pb-5">
-                <a [routerLink]="['/uf-admin']" routerLinkActive="active_side "
-                    [routerLinkActiveOptions]="{ exact: true }"
+                <a [routerLink]="['/']" routerLinkActive="active_side " [routerLinkActiveOptions]="{ exact: true }"
                     class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                    <i routerLinkActive="fa-fade" [routerLinkActiveOptions]="{ exact: true }"
-                        class="fa-solid transition-all duration-300 fa-house"></i>
+                    <!-- <i routerLinkActive="fa-fade" [routerLinkActiveOptions]="{ exact: true }"
+                        class="fa-solid transition-all duration-300 fa-house"></i> -->
                     <span class="ms-3 transition-all duration-300">Dashboard</span>
                 </a>
             </li>
-
+            <!-- home -->
             <li>
-                <a [routerLink]="['/uf-admin/categories']" routerLinkActive="active_side "
-                    [routerLinkActiveOptions]="{ exact: false }"
+                <a routerLinkActive="active_side " [routerLinkActiveOptions]="{ exact: false }"
                     class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <i routerLinkActive="fa-fade" [routerLinkActiveOptions]="{ exact: false }"
-                        class="fa-solid fa-layer-group"></i>
-                    <span class="flex-1 ms-3 transition-all duration-300 whitespace-nowrap">Category</span>
+                        class="fa-solid fa-house"></i>
+                    <span class="flex-1 ms-3 transition-all duration-300 whitespace-nowrap">Home</span>
+                </a>
+            </li>
+            <!-- user management -->
+            <li>
+                <a routerLinkActive="active_side " [routerLinkActiveOptions]="{ exact: false }"
+                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <i routerLinkActive="fa-fade" [routerLinkActiveOptions]="{ exact: false }"
+                        class="fa-solid fa-users"></i>
+                    <span class="flex-1 ms-3 transition-all duration-300 whitespace-nowrap">User Management</span>
+                </a>
+            </li>
+            <!-- location management -->
+            <li>
+                <a routerLinkActive="active_side " [routerLinkActiveOptions]="{ exact: false }"
+                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <i routerLinkActive="fa-fade" [routerLinkActiveOptions]="{ exact: false }"
+                        class="fa-solid fa-location-dot"></i>
+                    <span class="flex-1 ms-3 transition-all duration-300 whitespace-nowrap">Location Management</span>
+                </a>
+            </li>
+            <!-- transport management -->
+            <li>
+                <a routerLinkActive="active_side " [routerLinkActiveOptions]="{ exact: false }"
+                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <i routerLinkActive="fa-fade" [routerLinkActiveOptions]="{ exact: false }"
+                        class="fa-solid fa-truck"></i>
+                    <span class="flex-1 ms-3 transition-all duration-300 whitespace-nowrap">Transport Management</span>
+                </a>
+            </li>
+            <!-- transport request -->
+            <li>
+                <a routerLinkActive="active_side " [routerLinkActiveOptions]="{ exact: false }"
+                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <i routerLinkActive="fa-fade" [routerLinkActiveOptions]="{ exact: false }"
+                        class="fa-solid fa-truck-pickup"></i>
+                    <span class="flex-1 ms-3 transition-all duration-300 whitespace-nowrap">Transport Request</span>
+                </a>
+            </li>
+            <!-- subscription types -->
+            <li>
+                <a routerLinkActive="active_side " [routerLinkActiveOptions]="{ exact: false }"
+                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <i routerLinkActive="fa-fade" [routerLinkActiveOptions]="{ exact: false }"
+                        class="fa-solid fa-money-check-dollar"></i>
+                    <span class="flex-1 ms-3 transition-all duration-300 whitespace-nowrap">Subscription Types</span>
+                </a>
+            </li>
+            <!-- constact us -->
+            <li>
+                <a routerLinkActive="active_side " [routerLinkActiveOptions]="{ exact: false }"
+                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <i routerLinkActive="fa-fade" [routerLinkActiveOptions]="{ exact: false }"
+                        class="fa-solid fa-address-card"></i>
+                    <span class="flex-1 ms-3 transition-all duration-300 whitespace-nowrap">Contact Us</span>
                 </a>
             </li>
         </ul>

@@ -3,17 +3,9 @@ import { NotFoundComponent } from './shared/components/not-found/not-found.compo
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  {
-    path: '',
-    loadComponent: () =>
-      import('./features/application/application.component').then(
-        (c) => c.ApplicationComponent
-      ),
-  },
-
   // dashboard routing module routes
   {
-    path: 'uf-admin',
+    path: '',
     canActivate: [authGuard],
     loadChildren: () =>
       import('./shared/layouts/dashboard/dashboard-routing.module').then(
