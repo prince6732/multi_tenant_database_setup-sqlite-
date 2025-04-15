@@ -1,3 +1,4 @@
 .active_side {
-  @apply bg-yellow-300;
+  @apply bg-gray-200;
+  @apply text-blue-600
 }

@@ -9,7 +9,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () =>
       import('./shared/layouts/dashboard/dashboard-routing.module').then(
-        (c) => c.DashboardRoutingModule
+        (m) => m.DashboardRoutingModule
       ),
   },
 
