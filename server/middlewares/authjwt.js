@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config");
 const asyncHandler = require("./asyncHandler");
-const prisma = require("../prisma/prismaClient/prismaClient");
+const { User } = require("../models/admin");
 
-const verifyToken = (req, res, next) => {
+const verifyToken = asyncHandler(async (req, res, next) => {
   let token = req.headers["authorization"];
 
   if (!token) {
@@ -11,29 +11,32 @@ const verifyToken = (req, res, next) => {
   }
 
   if (!token.startsWith("Bearer ")) {
-    res.status(403).send({
+    return res.status(403).send({
       message: "Invalid token format.",
     });
   }
-  if (token.startsWith("Bearer ")) {
-    token = token.split(" ")[1];
-    jwt.verify(token, config.secret, async (err, decoded) => {
-      if (err) {
-        console.log("verify Error:");
-        console.log(err);
-        return res.status(401).send({
-          message: "Unauthorized!",
-        });
-      }
-      req.userId = decoded.id;
-      req.user = await prisma.users.findUnique({
-        where: { id: Number(req.userId) },
-      });
-      // console.log(req);
-      next();
+
+  token = token.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, config.secret);
+    req.userId = decoded.id;
+
+    // Fetch user using Sequelize
+    const user = await User.findByPk(req.userId);
+    if (!user) {
+      return res.status(401).send({ message: "User not found!" });
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error("Token verification error:", err);
+    return res.status(401).send({
+      message: "Unauthorized!",
     });
   }
-};
+});
 
 module.exports = {
   verifyToken,

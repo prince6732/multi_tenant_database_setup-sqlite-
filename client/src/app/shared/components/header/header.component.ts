@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TokenStorageService } from '../../../core/services/token-storage.service';
 import { ToggleClassService } from '../../../core/services/toggle-class.service';
-import { User } from '../../models/user.model';
+import { User } from '../../interface/interface';
 
 @Component({
   selector: 'app-header',

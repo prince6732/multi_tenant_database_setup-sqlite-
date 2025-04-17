@@ -1,17 +1,23 @@
-const prisma = require("../prisma/prismaClient/prismaClient");
 const { Sequelize } = require("sequelize");
 const bcrypt = require("bcrypt");
 const path = require("path");
-
 const {
   createTenantDatabase,
   runTenantMigrations,
   runTenantSeeders,
 } = require("../utils/dbUtils");
+const { Tenant, User, TransportRequest } = require("../models/admin");
 
 const activateUser = async (req, res) => {
-  const { name, password, dbname, email, subscription_type_id, prefix, request_id } =
-    req.body;
+  const {
+    name,
+    password,
+    dbname,
+    email,
+    subscription_type_id,
+    prefix,
+    request_id,
+  } = req.body;
 
   try {
     // Create tenant DB
@@ -20,40 +26,27 @@ const activateUser = async (req, res) => {
     runTenantMigrations(dbName);
     runTenantSeeders(dbName);
 
-    // Save tenant record in main DB using Prisma
-    const tenant = await prisma.tenants.create({
-      data: {
-        name,
-        dbname,
-        prefix,
-        email,
-        subscription_type_id,
-        activated_at: new Date(),
-        deactivated_at: new Date(),
-        status: true,
-        city_id: 1,
-      },
+    // Create tenant record using Sequelize
+    const tenant = await Tenant.create({
+      name,
+      dbname,
+      prefix,
+      email,
+      subscription_type_id,
+      activated_at: new Date(),
+      deactivated_at: new Date(),
+      status: true,
+      city_id: 1, 
     });
 
-    // update admin user table // append tenant id
-    await prisma.users.update({
-      where: {
-        email: email,
-      },
-      data: {
-        tenant_id: tenant.id,
-      },
-    });
+    // Update the admin user table to append tenant id using Sequelize
+    await User.update({ tenant_id: tenant.id }, { where: { email: email } });
 
-    // update status of tranport request
-    await prisma.transport_requests.update({
-      where: {
-        request_id: request_id,
-      },
-      data: {
-        status: "completed",
-      },
-    });
+    // Update transport request status using Sequelize
+    await TransportRequest.update(
+      { status: "completed" },
+      { where: { request_id: request_id } }
+    );
 
     // Connect to the new tenant DB (SQLite)
     const dbFilePath = path.resolve(
@@ -67,7 +60,7 @@ const activateUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert new user into tenant DB in user table
+    // Insert new user into tenant DB in user table using Sequelize query
     await tenantSequelize.query(
       `INSERT INTO users (name, email, password, is_primary) VALUES (?, ?, ?, ?)`,
       {

@@ -13,16 +13,23 @@ const routes: Routes = [
         path: 'users',
         loadComponent: () =>
           import(
-            '../../../features/pages/user-management/user-management.component'
-          ).then((m) => m.UserManagementComponent),
-        canActivate: [authGuard],
+            '../../../features/pages/user-management/user-table/user-table.component'
+          ).then((m) => m.UserTableComponent),
       },
       {
         path: 'locations',
         loadComponent: () =>
           import(
-            '../../../features/pages/location-management/location-management.component'
-          ).then((m) => m.LocationManagementComponent),
+            '../../../features/pages/location-management/states/states.component'
+          ).then((m) => m.StatesComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'locations/:state_id/cities',
+        loadComponent: () =>
+          import(
+            '../../../features/pages/location-management/state-cities/state-cities.component'
+          ).then((m) => m.StateCitiesComponent),
         canActivate: [authGuard],
       },
       {

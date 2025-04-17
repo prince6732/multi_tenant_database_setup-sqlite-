@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { User } from '../../shared/models/user.model';
+import { User } from '../../shared/interface/interface';
 
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'auth-user';

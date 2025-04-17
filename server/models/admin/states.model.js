@@ -1,6 +1,5 @@
-// models/State.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../db");
+const sequelize = require("../../db");
 
 const State = sequelize.define(
   "State",
@@ -16,16 +15,13 @@ const State = sequelize.define(
     },
     status: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
-    deleted_at: {
-      type: DataTypes.DATE,
-      allowNull: true,
+      defaultValue: false,
     },
   },
   {
-    tableName: "states", // matches your actual MySQL table name
-    timestamps: false, // disable createdAt/updatedAt
+    tableName: "states",
+    timestamps: false,
+    paranoid: true,
   }
 );
 

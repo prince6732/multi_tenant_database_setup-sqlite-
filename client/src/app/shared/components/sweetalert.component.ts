@@ -43,4 +43,17 @@ export class SweetalertComponent {
       icon: 'error',
     });
   }
+
+  showToast(
+    message: string,
+    icon: 'success' | 'error' | 'warning' | 'info',
+    timer?: number
+  ): void {
+    Swal.fire({
+      icon: icon,
+      title: message,
+      showConfirmButton: false,
+      timer: timer ? timer : 1000,
+    });
+  }
 }

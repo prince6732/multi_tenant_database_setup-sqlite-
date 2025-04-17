@@ -3,30 +3,31 @@ const bcrypt = require("bcryptjs");
 const config = require("../config/auth.config");
 const prisma = require("../prisma/prismaClient/prismaClient");
 const asyncHandler = require("../middlewares/asyncHandler");
+const { User } = require("../models/admin");
 require("dotenv").config();
 
-//log in
+// Login
 const login = asyncHandler(async (req, res) => {
-  const user = await prisma.users.findUnique({
-    where: {
-      email: req.body.email,
-    },
-  });
+  const { email, password } = req.body;
+
+  // Find user by email
+  const user = await User.findOne({ where: { email } });
+
   if (!user) {
-    return res.status(404).send({ message: "user not found!" });
+    return res.status(404).send({ message: "User not found!" });
   }
 
-  var passwordIsValid = await bcrypt.compareSync(
-    req.body.password,
-    user.password
-  );
+  // Validate password
+  const passwordIsValid = await bcrypt.compare(password, user.password);
+
   if (!passwordIsValid) {
     return res.status(401).send({
       accessToken: null,
-      message: "invalid password!",
+      message: "Invalid password!",
     });
   }
 
+  // Generate JWT
   const token = jwt.sign({ id: user.id.toString() }, config.secret, {
     algorithm: "HS256",
     allowInsecureKeySizes: true,
@@ -35,7 +36,8 @@ const login = asyncHandler(async (req, res) => {
 
   res.status(200).send({
     user: {
-      username: user.username,
+      // id: user.id,
+      // username: user.name,
       email: user.email,
     },
     accessToken: token,

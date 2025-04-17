@@ -1,0 +1,82 @@
+<div class="">
+    <div class="card bg-white rounded-lg shadow px-5 py-3 mb-6 border-t-2">
+        <div class="table_title flex justify-between items-center">
+            <h2 class="text-[1.8rem] font-medium">Users</h2>
+            <div class="flex justify-center items-center w-full md:w-1/3">
+                <input type="search" class="w-80 px-4 py-2 border rounded-md" placeholder="Search Users by name..."
+                    [(ngModel)]="searchQuery" (input)="filterUsers()">
+            </div>
+            <a role="button" (click)="openModal()"
+                class="bg-yellow-300 py-3 px-5 font-medium text-[0.9rem] rounded-lg flex gap-3 items-center justify-center">
+                <i class="fa-solid fa-user-plus"></i>
+                <span> Add New</span></a>
+        </div>
+    </div>
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg border-t-2">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">S.No.</th>
+                    <th scope="col" class="px-6 py-3">Name</th>
+                    <th scope="col" class="px-6 py-3">Email</th>
+                    <th scope="col" class="px-6 py-3">Joining date</th>
+                    <th scope="col" class="px-6 py-3"> Status</th>
+                    <th scope="col" class="px-6 py-3">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of filteredUsers; index as i"
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ i + 1 }}<b>.</b>
+                    </td>
+                    <td class="px-6 py-4" [innerHTML]="user.name | highlight:searchQuery">{{user.name}}</td>
+                    <td class="px-6 py-4">{{ user.email }}</td>
+                    <td class="px-6 py-4">{{ user.created_at }}</td>
+
+                    <td class="px-6 py-4">
+                        <span class="text-[0.8rem] text-black py-1 px-3 capitalize rounded-lg" [ngClass]="{
+                'bg-green-100': user.status == true,
+                'bg-red-100': user.status == false,
+                'text-green-600': user.status == true,
+                'text-red-600': user.status == false,
+              }">{{ user.status ? 'Active' : 'Inactive'}}</span>
+                    </td>
+
+                    <td class="px-6 py-4">
+                        <div class="relative">
+                            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
+                                class="bg-transparent border butn py-3 px-4 font-medium text-[0.9rem] rounded-lg flex gap-2 items-center [&~.menu]:hover:min-h-auto [&~.menu]:hover:max-h-[300px] hover:[&~.menu]:min-h-auto hover:[&~.menu]:max-h-[300px]">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                            <div id="dropdown"
+                                class="w-48 absolute bottom-0 end-full z-50 menu text-sm font-medium h-auto min-h-0 max-h-0 overflow-hidden transition-all duration-300 shadow ease-linear text-gray-900 delay-0 bg-white rounded-lg dark:bg-gray-700 dark:text-white">
+                                <div aria-labelledby="dropdownDefaultButton">
+                                    <a role="button" (click)="openEditModal(user)"
+                                        class="flex justify-start items-center gap-2 w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:text-black hover:bg-yellow-300 focus:outline-none focus:text-black focus:bg-yellow-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white focus:ring-0 dark:focus:text-white">
+                                        <span><i class="fa-solid fa-pen-to-square me-3 text-[1rem]"></i> Edit</span>
+                                    </a>
+                                    <a role="button" (click)="deleteUser(user.id)"
+                                        class="flex justify-start items-center gap-2 w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:text-black hover:bg-yellow-300 focus:outline-none focus:text-black focus:bg-yellow-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white focus:ring-0 dark:focus:text-white">
+                                        <span><i class="fa-solid fa-trash me-3 text-[1rem]"></i> Delete</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- <div *ngIf="showCompletionModal"
+    class="modal fixed top-0 start-0 h-screen w-screen bg-black bg-opacity-50 z-[1499] flex justify-center items-center"
+    [class.show]="showCompletionModal">
+    <div class="card max-w-[900px] bg-white rounded-lg shadow px-5 py-3 mb-6 border-t-2">
+
+        <div class="modal-content pb-4">
+            <app-user-form [data]="editModal" (panelClosed)="closeModal($event)"></app-user-form>
+        </div>
+    </div>
+</div> -->
