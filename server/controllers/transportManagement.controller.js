@@ -1,6 +1,6 @@
 const asyncHandler = require("../middlewares/asyncHandler");
 const { State, Tenant, City } = require("../models/admin");
-const { fn, literal } = require("sequelize");
+const { fn, col, literal } = require("sequelize");
 
 const getActiveCities = asyncHandler(async (req, res) => {
   try {
@@ -50,32 +50,31 @@ const getCitiesTrasport = asyncHandler(async (req, res) => {
         .json({ success: false, message: "State ID is required" });
     }
 
-    // Get only cities that are used in tenants (have at least one tenant)
     const cities = await City.findAll({
+      where: { state_id },
       include: [
         {
           model: Tenant,
-          required: true, // makes it INNER JOIN (only cities with tenants)
-          attributes: [], // we don't need tenant data, just to filter
+          required: true,
+          attributes: [], // we only want count, not tenant fields
         },
       ],
-      where: {
-        state_id: state_id,
-      },
+      attributes: [
+        "id",
+        "name",
+        [fn("COUNT", col("Tenants.id")), "tenantCount"],
+      ],
+      group: ["City.id"],
       order: [["name", "ASC"]],
-      attributes: ["id", "name"],
-      group: ["City.id"], // ensures distinct cities
     });
 
     const state = await State.findOne({
-      where: {
-        id: state_id,
-      },
+      where: { id: state_id },
       attributes: ["id", "name"],
     });
 
     res.status(200).json({
-      cities: cities,
+      cities,
       stateName: state ? state.name : "",
     });
   } catch (err) {
