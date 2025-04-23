@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": "root1234",
-    "database": "truckage2",
+    "database": "truckage",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
