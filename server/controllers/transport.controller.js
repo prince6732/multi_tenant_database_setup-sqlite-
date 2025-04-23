@@ -7,49 +7,101 @@ const {
   runTenantMigrations,
   runTenantSeeders,
 } = require("../utils/dbUtils");
-const { Tenant, User, TransportRequest } = require("../models/admin");
+const {
+  Tenant,
+  User,
+  TransportRequest,
+  City,
+  State,
+  SubscriptionType,
+} = require("../models/admin");
 
 const createTransport = async (req, res) => {
-  const {
-    name,
-    password,
-    dbname,
-    email,
-    subscription_type_id,
-    prefix,
-    request_id,
-  } = req.body;
+  const { name, dbname, email, subscription_type_id, activated_at, prefix } =
+    req.body;
+  const { request_id } = req.params;
 
   try {
-    // Create tenant DB
+    const transportRequest = await TransportRequest.findOne({
+      where: { request_id },
+    });
+    if (!transportRequest) {
+      return res
+        .status(404)
+        .json({ res: "fail", message: "Transport request not found" });
+    }
+
+    const { city_id, user_id } = transportRequest;
+
+    const user = await User.findOne({ where: { id: user_id } });
+    if (!user || !user.password) {
+      return res
+        .status(404)
+        .json({ res: "fail", message: "User not found or password missing" });
+    }
+
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+
+    const subscription = await SubscriptionType.findOne({
+      where: { id: subscription_type_id },
+    });
+    if (!subscription) {
+      return res
+        .status(400)
+        .json({ res: "fail", message: "Subscription type not found" });
+    }
+
+    const activatedDate = new Date(activated_at);
+    let deactivated_at = null;
+
+    switch (subscription.duration) {
+      case "week":
+        deactivated_at = new Date(activatedDate);
+        deactivated_at.setDate(deactivated_at.getDate() + 7);
+        break;
+      case "month":
+        deactivated_at = new Date(activatedDate);
+        deactivated_at.setMonth(deactivated_at.getMonth() + 1);
+        break;
+      case "halfYear":
+        deactivated_at = new Date(activatedDate);
+        deactivated_at.setMonth(deactivated_at.getMonth() + 6);
+        break;
+      case "Year":
+        deactivated_at = new Date(activatedDate);
+        deactivated_at.setFullYear(deactivated_at.getFullYear() + 1);
+        break;
+      default:
+        return res.status(400).json({
+          res: "fail",
+          message: "Invalid subscription type duration",
+        });
+    }
+
     const dbName = `${prefix}_${dbname}`;
     await createTenantDatabase(dbName);
     runTenantMigrations(dbName);
     runTenantSeeders(dbName);
 
-    // Create tenant record using Sequelize
     const tenant = await Tenant.create({
       name,
       dbname,
       prefix,
       email,
       subscription_type_id,
-      activated_at: new Date(),
-      deactivated_at: new Date(),
+      activated_at,
+      deactivated_at,
       status: true,
-      city_id: 1,
+      city_id,
     });
 
-    // Update the admin user table to append tenant id using Sequelize
-    await User.update({ tenant_id: tenant.id }, { where: { email: email } });
+    await User.update({ tenant_id: tenant.id }, { where: { id: user_id } });
 
-    // Update transport request status using Sequelize
     await TransportRequest.update(
       { status: "completed" },
-      { where: { request_id: request_id } }
+      { where: { request_id } }
     );
 
-    // Connect to the new tenant DB (SQLite)
     const dbFilePath = path.resolve(
       __dirname,
       `../databases/tenantsDB/${dbName}.sqlite`
@@ -59,14 +111,9 @@ const createTransport = async (req, res) => {
       storage: dbFilePath,
     });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insert new user into tenant DB in user table using Sequelize query
     await tenantSequelize.query(
       `INSERT INTO users (name, email, password, is_primary) VALUES (?, ?, ?, ?)`,
-      {
-        replacements: [name, email, hashedPassword, true],
-      }
+      { replacements: [name, email, hashedPassword, true] }
     );
 
     await tenantSequelize.close();
@@ -90,10 +137,7 @@ const getFreshTransportRequests = asyncHandler(async (req, res) => {
       order: [["created_at", "DESC"]],
     });
 
-    res.status(200).json({
-      success: true,
-      transportRequests,
-    });
+    res.status(200).json(transportRequests);
   } catch (err) {
     console.error("Error fetching fresh transport requests:", err);
     res
@@ -108,6 +152,18 @@ const getTransportRequestById = asyncHandler(async (req, res) => {
   try {
     const transportRequest = await TransportRequest.findOne({
       where: { request_id },
+      include: [
+        {
+          model: City,
+          attributes: ["name"],
+          include: [
+            {
+              model: State,
+              attributes: ["name"],
+            },
+          ],
+        },
+      ],
     });
 
     if (!transportRequest) {
@@ -119,7 +175,7 @@ const getTransportRequestById = asyncHandler(async (req, res) => {
 
     res.status(200).json({
       success: true,
-      transportRequest,
+      transportRequest: transportRequest,
     });
   } catch (err) {
     console.error("Error fetching transport request:", err);

@@ -1,23 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
 import { State } from '../../../../shared/interface/interface';
-import { StateService } from '../../../../core/services/state.service';
-import { CommonModule, Location } from '@angular/common';
+import { TransportManagementService } from '../../../../core/services/transport-management.service';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-states',
+  selector: 'app-transport-states',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './states.component.html',
+  templateUrl: './transport-states.component.html',
 })
-export class StatesComponent implements OnInit {
+export class TransportStatesComponent implements OnInit {
   states: State[] = [];
   searchStates: State[] = [];
   search: string = '';
 
   constructor(
-    private stateService: StateService,
+    private transportManagementService: TransportManagementService,
     private router: Router
   ) {}
 
@@ -27,7 +27,7 @@ export class StatesComponent implements OnInit {
 
   // get all states
   getAllStates(): void {
-    this.stateService.getAllStates().subscribe({
+    this.transportManagementService.getAllStates().subscribe({
       next: (data) => {
         this.states = data;
         this.searchStates = data;
@@ -43,10 +43,10 @@ export class StatesComponent implements OnInit {
     );
   }
 
-  // view state cities
-  viewStateCities(event: Event, state_id: number) {
+  // get all transport cities by state id 
+  viewTransportCities(event: Event, state_id: number) {
     if (!(event.target as HTMLElement).closest('button')) {
-      this.router.navigate(['locations', state_id, 'cities']);
+      this.router.navigate(['transports/transport-cities', state_id]);
     }
   }
 }

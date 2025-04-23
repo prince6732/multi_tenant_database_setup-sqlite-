@@ -1,0 +1,69 @@
+<div class="px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 border-t-4 border-blue-600">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-700">
+                <ng-container *ngIf="cityName">
+                    <span class="text-green-500">{{stateName}}</span> | <span class="text-blue-500">{{ cityName }}</span>
+                    | Transports
+                </ng-container>
+            </h2>
+        </div>
+
+        <div class="relative overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+            <table class="w-full text-sm text-left text-gray-600">
+                <thead class="bg-gray-100 text-xs font-semibold uppercase text-gray-700">
+                    <tr>
+                        <th class="px-6 py-3">S.No.</th>
+                        <th class="px-6 py-3">Name</th>
+                        <th class="px-6 py-3">Email</th>
+                        <th class="px-6 py-3">Joining Date</th>
+                        <th class="px-6 py-3">Deactivation Date</th>
+                        <th class="px-6 py-3">Status</th>
+                        <th class="px-6 py-3 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let transport of transports; index as i"
+                        class="bg-white border-b hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <td class="px-6 py-4 font-medium">{{ i + 1 }}.</td>
+                        <td class="px-6 py-4">{{ transport.name }}</td>
+                        <td class="px-6 py-4">{{ transport.email }}</td>
+                        <td class="px-6 py-4">{{ transport.activated_at | date:'longDate' }}</td>
+                        <td class="px-6 py-4">{{ transport.deactivated_at | date:'longDate' }}</td>
+                        <td class="px-6 py-4">
+                            <span class="inline-block text-xs font-semibold py-1 px-3 rounded-full" [ngClass]="{
+                    'bg-green-100 text-green-700': transport.status,
+                    'bg-red-100 text-red-700': !transport.status
+                  }">
+                                {{ transport.status ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                        <td class="px-6 py-4">
+                            <div class="relative">
+                                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
+                                    class="bg-transparent border butn py-3 px-4 font-medium text-[0.9rem] rounded-lg flex gap-2 items-center [&~.menu]:hover:min-h-auto [&~.menu]:hover:max-h-[300px] hover:[&~.menu]:min-h-auto hover:[&~.menu]:max-h-[300px]">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                <div id="dropdown"
+                                    class="w-48 absolute bottom-0 end-full z-50 menu text-sm font-medium h-auto min-h-0 max-h-0 overflow-hidden transition-all duration-300 shadow ease-linear text-gray-900 delay-0 bg-white rounded-lg dark:bg-gray-700 dark:text-white">
+                                    <div aria-labelledby="dropdownDefaultButton">
+                                        <a
+                                            class="flex justify-start items-center gap-2 w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:text-black hover:bg-yellow-300 focus:outline-none focus:text-black focus:bg-yellow-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white focus:ring-0 dark:focus:text-white">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                            <span>Details</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div *ngIf="transports.length === 0" class="mt-40 text-center">
+        <h2 class="text-lg font-semibold text-red-500">No Transport Found!</h2>
+    </div>
+</div>

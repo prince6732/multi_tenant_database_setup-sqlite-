@@ -83,4 +83,41 @@ const getCitiesTrasport = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getActiveCities, getCitiesTrasport };
+const getTenantsByCity = asyncHandler(async (req, res) => {
+  try {
+    const { city_id } = req.params;
+
+    if (!city_id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "City ID is required" });
+    }
+
+    const tenants = await Tenant.findAll({
+      where: { city_id },
+      order: [["name", "ASC"]],
+    });
+
+    const city = await City.findOne({
+      where: { id: city_id },
+      attributes: ["id", "name"],
+      include: {
+        model: State,
+        attributes: ["name"],
+      },
+    });
+
+    res.status(200).json({
+      tenants,
+      cityName: city ? city.name : "",
+      stateName: city && city.State ? city.State.name : "",
+    });
+  } catch (err) {
+    console.error("Error fetching tenants by city:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch tenants" });
+  }
+});
+
+module.exports = { getActiveCities, getCitiesTrasport, getTenantsByCity };

@@ -1,0 +1,82 @@
+<form [formGroup]="rForm" (ngSubmit)="onSubmit()" class="space-y-4 p-6 bg-white rounded shadow-md max-w-xl mx-auto">
+
+  <!-- Name -->
+  <div>
+    <label for="name" class="block mb-1 text-sm font-medium text-gray-700">Name<span
+        class="text-red-600">*</span></label>
+    <input id="name" type="text" formControlName="name"
+      class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <div *ngIf="rForm.get('name')?.touched && rForm.get('name')?.invalid" class="text-red-600 text-sm font-medium">
+      Name is required.
+    </div>
+  </div>
+
+  <!-- DB Name -->
+  <div>
+    <label for="dbname" class="block mb-1 text-sm font-medium text-gray-700">DB Name<span
+        class="text-red-600">*</span></label>
+    <input id="dbname" type="text" formControlName="dbname"
+      class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <div *ngIf="rForm.get('dbname')?.touched && rForm.get('dbname')?.invalid" class="text-red-600 text-sm font-medium">
+      DB Name is required.
+    </div>
+  </div>
+
+  <!-- Email -->
+  <div>
+    <label for="email" class="block mb-1 text-sm font-medium text-gray-700">Email<span
+        class="text-red-600">*</span></label>
+    <input id="email" type="email" formControlName="email"
+      class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <div *ngIf="rForm.get('email')?.touched && rForm.get('email')?.errors" class="text-red-600 text-sm font-medium">
+      <div *ngIf="rForm.get('email')?.hasError('required')">Email is required.</div>
+      <div *ngIf="rForm.get('email')?.hasError('email')">Invalid email format.</div>
+    </div>
+  </div>
+
+  <!-- Prefix -->
+  <div>
+    <label for="prefix" class="block mb-1 text-sm font-medium text-gray-700">Prefix<span
+        class="text-red-600">*</span></label>
+    <input id="prefix" type="text" formControlName="prefix"
+      class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <div *ngIf="rForm.get('prefix')?.touched && rForm.get('prefix')?.invalid" class="text-red-600 text-sm font-medium">
+      Prefix is required.
+    </div>
+  </div>
+
+  <!-- Subscription Type -->
+  <div class="lg:w-[calc(100%_/_2_-_13.33px)] w-[calc(100%_/_1_-_13.33px)]">
+    <div>
+      <label for="subscription_type_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
+        Subscription Type<span class="text-[1.2rem] font-bold align-bottom text-yellow-400">*</span></label>
+      <select formControlName="subscription_type_id" id="subscription_type_id"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-300 focus:border-yellow-300 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+        <option value selected disabled hidden>--- Choose Subscription Type ---</option>
+        <option *ngFor="let subscriptionType of subscriptionTypes" [value]="subscriptionType.id">
+          {{ subscriptionType.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Activated At -->
+  <div>
+    <label for="activated_at" class="block mb-1 text-sm font-medium text-gray-700">Activated At<span
+        class="text-red-600">*</span></label>
+    <input id="activated_at" type="date" formControlName="activated_at"
+      class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <div *ngIf="rForm.get('activated_at')?.touched && rForm.get('activated_at')?.invalid"
+      class="text-red-600 text-sm font-medium">
+      Activation date is required.
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="flex justify-end space-x-4 pt-4">
+    <button type="reset" (click)="rForm.reset()"
+      class="px-4 py-2 bg-gray-300 text-gray-800 font-medium rounded hover:bg-gray-400 transition">Reset</button>
+    <button type="submit"
+      class="px-4 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition">Submit</button>
+  </div>
+</form>

@@ -3,7 +3,7 @@ const transportController = require("../controllers/transport.controller");
 const transportRouter = Router();
 
 transportRouter.post(
-  "/api/create-transport",
+  "/api/create-transport/:request_id",
   transportController.createTransport
 );
 

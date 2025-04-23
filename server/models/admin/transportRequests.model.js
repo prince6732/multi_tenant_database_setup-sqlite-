@@ -38,6 +38,14 @@ const TransportRequest = sequelize.define(
       type: DataTypes.ENUM("fresh", "completed", "rejected"),
       defaultValue: "fresh",
     },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   },
   {
     tableName: "transport_requests",

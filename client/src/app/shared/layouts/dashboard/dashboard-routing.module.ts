@@ -36,24 +36,56 @@ const routes: Routes = [
         path: 'transports',
         loadComponent: () =>
           import(
-            '../../../features/pages/transport-management/transport-management.component'
-          ).then((m) => m.TransportManagementComponent),
+            '../../../features/pages/transport-management/transport-states/transport-states.component'
+          ).then((m) => m.TransportStatesComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'transports/transport-cities/:state_id',
+        loadComponent: () =>
+          import(
+            '../../../features/pages/transport-management/transport-cities/transport-cities.component'
+          ).then((m) => m.TransportCitiesComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'transports/getCities-transport/:city_id',
+        loadComponent: () =>
+          import(
+            '../../../features/pages/transport-management/tenants/tenants.component'
+          ).then((m) => m.TenantsComponent),
         canActivate: [authGuard],
       },
       {
         path: 'transport-requests',
         loadComponent: () =>
           import(
-            '../../../features/pages/transport-requests/transport-requests.component'
+            '../../../features/pages/transport-requests/transport-requests/transport-requests.component'
           ).then((m) => m.TransportRequestsComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'transport-requests/show/:request_id',
+        loadComponent: () =>
+          import(
+            '../../../features/pages/transport-requests/transport-requests-details/transport-requests-details.component'
+          ).then((m) => m.TransportRequestsDetailsComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'activate-transport/:request_id',
+        loadComponent: () =>
+          import(
+            '../../../features/pages/create-transport/create-transport.component'
+          ).then((m) => m.CreateTransportComponent),
         canActivate: [authGuard],
       },
       {
         path: 'subscription-types',
         loadComponent: () =>
           import(
-            '../../../features/pages/subscription-types/subscription-types.component'
-          ).then((m) => m.SubscriptionTypesComponent),
+            '../../../features/pages/subscription-types/subscription-types-list/subscription-types-list.component'
+          ).then((m) => m.SubscriptionTypesListComponent),
         canActivate: [authGuard],
       },
       {

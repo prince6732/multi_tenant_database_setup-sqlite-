@@ -1,0 +1,35 @@
+<div class="max-w-4xl mx-auto mt-10 p-4" *ngIf="tpRequest">
+    <h2 class="text-xl font-semibold border border-gray-200 rounded-md px-4 py-3 bg-white shadow-sm">
+        Transport request
+    </h2>
+
+    <div class="mt-6 bg-white border border-gray-200 rounded-md p-6 shadow-sm relative">
+        <div class="flex justify-between items-start">
+            <div>
+                <h3 class="text-xl font-semibold flex items-center gap-2 text-gray-800">
+                    <i class="fa-solid fa-envelope"></i>
+                    {{ tpRequest.name }}
+                </h3>
+
+                <p class="flex items-center gap-2 mt-2 text-gray-700">
+                    <i class="fa-solid fa-phone"></i>
+                    <strong>Contact:</strong> {{ tpRequest.contact }}
+                </p>
+
+                <p class="text-gray-700 mt-2">State: {{ tpRequest.City?.State?.name }}</p>
+                <p class="text-gray-700">City: {{ tpRequest.City?.name }}</p>
+                <p class="text-gray-700">Status: <span class="capitalize font-medium">{{ tpRequest.status }}</span></p>
+                <p class="text-gray-700">Date of Joining: {{ tpRequest.created_at | date: 'longDate' }}</p>
+                <p class="text-gray-800 font-semibold mt-2">
+                    Remarks: <span class="font-normal">{{ tpRequest.message }}</span>
+                </p>
+            </div>
+
+            <button *ngIf="tpRequest?.status === 'fresh'" (click)="createTransport(tpRequest.request_id)"
+                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition font-medium text-sm">
+                Create transport
+            </button>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,92 @@
+<div class="">
+    <div class="card bg-white rounded-lg shadow px-5 py-3 mb-6 border-t-2">
+        <div class="table_title cursor-pointer flex justify-between items-center">
+            <h2 class="text-[1.8rem] font-medium">Subscription Types</h2>
+            <button (click)="openModal()"
+                class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded transition duration-200">
+                Create
+            </button>
+        </div>
+    </div>
+
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg border-t-2">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">S.No.</th>
+                    <th scope="col" class="px-6 py-3">Name</th>
+                    <th scope="col" class="px-6 py-3">Price</th>
+                    <th scope="col" class="px-6 py-3">Duration</th>
+                    <th scope="col" class="px-6 py-3">Status</th>
+                    <th scope="col" class="px-6 py-3">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let subscriptionType of subscriptionTypes; index as i"
+                    class="bg-white border-b dark:bg-gray-800 cursor-pointer dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td class="px-6 py-4">
+                        <b>{{ i + 1 }}.</b>
+                    </td>
+                    <td class="px-6 py-4">{{ subscriptionType.name }}</td>
+                    <td class="px-6 py-4">{{ subscriptionType.price }}</td>
+                    <td class="px-6 py-4">{{ subscriptionType.duration }}</td>
+                    <td class="px-6 py-4">
+                        <span class="text-[0.8rem] text-black py-1 px-3 capitalize rounded-lg" [ngClass]="{
+              'bg-green-100': subscriptionType.status == true,
+              'bg-red-100': subscriptionType.status == false,
+              'text-green-600': subscriptionType.status == true,
+              'text-red-600': subscriptionType.status == false,
+            }">{{ subscriptionType.status ? 'Active' : 'Inactive' }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="relative">
+                            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
+                                class="bg-transparent border butn py-3 px-4 font-medium text-[0.9rem] rounded-lg flex gap-2 items-center [&~.menu]:hover:min-h-auto [&~.menu]:hover:max-h-[300px] hover:[&~.menu]:min-h-auto hover:[&~.menu]:max-h-[300px]">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                            <div id="dropdown"
+                                class="w-48 absolute bottom-0 end-full z-50 menu text-sm font-medium h-auto min-h-0 max-h-0 overflow-hidden transition-all duration-300 shadow ease-linear text-gray-900 delay-0 bg-white rounded-lg dark:bg-gray-700 dark:text-white">
+                                <div aria-labelledby="dropdownDefaultButton">
+                                    <a (click)="openEditModal($event, subscriptionType)"
+                                        class="flex justify-start items-center gap-2 w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:text-black hover:bg-yellow-300 focus:outline-none focus:text-black focus:bg-yellow-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white focus:ring-0 dark:focus:text-white">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                        <span>Edit</span>
+                                    </a>
+                                    <a role="button"
+                                        class="flex justify-start items-center gap-2 w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:text-black hover:bg-yellow-300 focus:outline-none focus:text-black focus:bg-yellow-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white focus:ring-0 dark:focus:text-white">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                        <span>Delete</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div *ngIf="subscriptionTypes.length === 0" class="flex flex-col items-center justify-center mt-48 text-center">
+    <h2 class="text-lg font-semibold text-red-500">No Subscription Types Found!</h2>
+</div>
+
+<div *ngIf="showCompletionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[115]">
+    <div class="absolute inset-0 bg-black bg-opacity-60 cursor-pointer" (click)="closeModal(true)"></div>
+    <div class="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+        <button (click)="closeModal(true)" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition"
+            aria-label="Close">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+        <div class="text-center border-b border-gray-300 pb-4 mb-4">
+            <h3 class="text-xl font-semibold text-gray-700">
+                {{ editModal?.id ? 'Edit Subscription Type' : 'Create Subscription Type' }}
+            </h3>
+        </div>
+        <div class="modal-content">
+            <app-subscription-types-form [data]="editModal"
+                (panelClosed)="closeModal($event)"></app-subscription-types-form>
+        </div>
+    </div>
+</div>

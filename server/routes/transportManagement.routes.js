@@ -12,4 +12,9 @@ transportManagementRouter.get(
   transportManagementController.getCitiesTrasport
 );
 
+transportManagementRouter.get(
+  "/api/transport/tenants/:city_id",
+  transportManagementController.getTenantsByCity
+);
+
 module.exports = transportManagementRouter;

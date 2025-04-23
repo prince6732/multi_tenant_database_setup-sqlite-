@@ -1,0 +1,62 @@
+<div class="">
+    <div class="card bg-white rounded-lg shadow px-5 py-3 mb-6 border-t-2">
+        <div class="table_title cursor-pointer flex justify-between items-center">
+            <h2 class="font-medium text-[20px]">
+                <span *ngIf="stateName" class="text-gray-600"><span>{{ stateName }}</span> | Cities </span>
+            </h2>
+            <input [(ngModel)]="search" (input)="searchCity()" type="text" placeholder="Search Cities..."
+                class="border border-gray-300 rounded-lg px-4 py-2 w-[300px] text-gray-600" />
+
+        </div>
+    </div>
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg border-t-2">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">S.No.</th>
+                    <th scope="col" class="px-6 py-3">Name</th>
+                    <th scope="col" class="px-6 py-3">Transports</th>
+                    <th scope="col" class="px-6 py-3">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let city of searchCities; index as i"
+                    class="bg-white border-b dark:bg-gray-800 cursor-pointer dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td class="px-6 py-4">
+                        <b>{{ i + 1 }}.</b>
+                    </td>
+                    <td class="px-6 py-4">{{ city.name }}</td>
+                    <td class="px-6 py-4">
+                        <span *ngIf="city.tenantCount; else noTransport" class="font-bold text-black">{{
+                            city.tenantCount
+                            }}</span>
+                        <ng-template #noTransport>No Transport</ng-template>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="relative">
+                            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
+                                class="bg-transparent border butn py-3 px-4 font-medium text-[0.9rem] rounded-lg flex gap-2 items-center [&~.menu]:hover:min-h-auto [&~.menu]:hover:max-h-[300px] hover:[&~.menu]:min-h-auto hover:[&~.menu]:max-h-[300px]">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                            <div id="dropdown"
+                                class="w-48 absolute bottom-0 end-full z-50 menu text-sm font-medium h-auto min-h-0 max-h-0 overflow-hidden transition-all duration-300 shadow ease-linear text-gray-900 delay-0 bg-white rounded-lg dark:bg-gray-700 dark:text-white">
+                                <div aria-labelledby="dropdownDefaultButton">
+                                    <a (click)="viewTransportByCity($event, city.id)"
+                                        class="flex justify-start items-center gap-2 w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:text-black hover:bg-yellow-300 focus:outline-none focus:text-black focus:bg-yellow-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white focus:ring-0 dark:focus:text-white">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                        <span>Details</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="flex flex-col items-center justify-center mt-48 text-center">
+    <h2 *ngIf="searchCities.length === 0" class="text-lg font-semibold text-red-500">No Cities Found!</h2>
+</div>

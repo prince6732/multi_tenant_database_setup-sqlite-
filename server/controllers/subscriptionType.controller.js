@@ -33,7 +33,7 @@ const createSubscriptionType = asyncHandler(async (req, res) => {
 const getAllSubscriptionTypes = asyncHandler(async (req, res) => {
   try {
     const subscriptionTypes = await SubscriptionType.findAll();
-    res.status(200).json({ success: true, subscriptionTypes });
+    res.status(200).json(subscriptionTypes);
   } catch (err) {
     console.error("Error fetching subscription types:", err);
     res
@@ -107,12 +107,10 @@ const deleteSubscriptionType = asyncHandler(async (req, res) => {
 
     await subscriptionType.destroy();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Subscription type deleted successfully",
-      });
+    res.status(200).json({
+      success: true,
+      message: "Subscription type deleted successfully",
+    });
   } catch (err) {
     console.error("Error deleting subscription type:", err);
     res
