@@ -74,9 +74,11 @@
 
   <!-- Buttons -->
   <div class="flex justify-end space-x-4 pt-4">
-    <button type="reset" (click)="rForm.reset()"
+    <button type="reset" (click)="rForm.reset()" [disabled]="loading"
       class="px-4 py-2 bg-gray-300 text-gray-800 font-medium rounded hover:bg-gray-400 transition">Reset</button>
-    <button type="submit"
+    <button type="submit" [disabled]="loading"
       class="px-4 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition">Submit</button>
   </div>
 </form>
+
+<app-processing *ngIf="loading"></app-processing>

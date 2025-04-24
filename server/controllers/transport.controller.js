@@ -186,8 +186,35 @@ const getTransportRequestById = asyncHandler(async (req, res) => {
   }
 });
 
+// Delete a state by ID
+const deleteTransportRequest = asyncHandler(async (req, res) => {
+  try {
+    const { request_id } = req.params;
+
+    const state = await TransportRequest.findByPk(request_id);
+    if (!state) {
+      return res
+        .status(404)
+        .json({ success: false, message: "request not found" });
+    }
+
+    await state.destroy();
+
+    res.status(200).json({
+      success: true,
+      message: "request deleted successfully",
+    });
+  } catch (err) {
+    console.error("Error deleting request:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to delete request" });
+  }
+});
+
 module.exports = {
   createTransport,
   getFreshTransportRequests,
   getTransportRequestById,
+  deleteTransportRequest,
 };

@@ -4,6 +4,10 @@
             <h2 class="font-medium text-[20px]">
                 <span *ngIf="stateName" class="text-gray-600"><span>{{ stateName }}</span> | Cities </span>
             </h2>
+            <button (click)="openModal()"
+                class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded transition duration-200">
+                Create
+            </button>
             <input [(ngModel)]="search" (input)="searchCity()" type="text" placeholder="Search Cities..."
                 class="border border-gray-300 rounded-lg px-4 py-2 w-[300px] text-gray-600" />
 
@@ -44,12 +48,12 @@
                             <div id="dropdown"
                                 class="w-48 absolute bottom-0 end-full z-50 menu text-sm font-medium h-auto min-h-0 max-h-0 overflow-hidden transition-all duration-300 shadow ease-linear text-gray-900 delay-0 bg-white rounded-lg dark:bg-gray-700 dark:text-white">
                                 <div aria-labelledby="dropdownDefaultButton">
-                                    <a
+                                    <a (click)="openEditModal($event, city)"
                                         class="flex justify-start items-center gap-2 w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:text-black hover:bg-yellow-300 focus:outline-none focus:text-black focus:bg-yellow-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white focus:ring-0 dark:focus:text-white">
                                         <i class="fa-regular fa-pen-to-square"></i>
                                         <span>Edit</span>
                                     </a>
-                                    <a role="button"
+                                    <a role="button" (click)="deleteCity(city.id)"
                                         class="flex justify-start items-center gap-2 w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:text-black hover:bg-yellow-300 focus:outline-none focus:text-black focus:bg-yellow-300 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white focus:ring-0 dark:focus:text-white">
                                         <i class="fa-regular fa-trash-can"></i>
                                         <span>Delete</span>
@@ -66,4 +70,23 @@
 
 <div class="flex flex-col items-center justify-center mt-48 text-center">
     <h2 *ngIf="searchCities.length === 0" class="text-lg font-semibold text-red-500">No Cities Found!</h2>
+</div>
+
+<div *ngIf="showCompletionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[115]">
+    <div class="absolute inset-0 bg-black bg-opacity-60 cursor-pointer" (click)="closeModal(true)"></div>
+    <div class="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+        <button (click)="closeModal(true)" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition"
+            aria-label="Close">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+        <div class="text-center border-b border-gray-300 pb-4 mb-4">
+            <h3 class="text-xl font-semibold text-gray-700">
+                {{ editModal?.id ? 'Edit ' + editModal?.name : 'Create City' }}
+
+            </h3>
+        </div>
+        <div class="modal-content">
+            <app-cities-form [data]="editModal" (panelClosed)="closeModal($event)"></app-cities-form>
+        </div>
+    </div>
 </div>

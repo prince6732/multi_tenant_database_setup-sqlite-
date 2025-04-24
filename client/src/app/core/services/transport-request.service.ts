@@ -5,7 +5,6 @@ import { environment } from '../../../environments/environment';
 import { TransportRequest } from '../../shared/interface/interface';
 
 const apiUrl = `${environment.apiUrl}/api/transport-requests`;
-// /api/transport-requests/:request_id
 
 @Injectable({
   providedIn: 'root',
@@ -19,5 +18,9 @@ export class TransportRequestService {
 
   getTPReqByReqId(request_id: string): Observable<TransportRequest[]> {
     return this.http.get<TransportRequest[]>(`${apiUrl}/${request_id}`);
+  }
+
+  deleteTpReq(id: number): Observable<TransportRequest> {
+    return this.http.delete<TransportRequest>(`${apiUrl}/${id}`);
   }
 }

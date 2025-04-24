@@ -8,25 +8,28 @@ import {
 import { SubscriptionTypes } from '../../../shared/interface/interface';
 import { ActivatedRoute } from '@angular/router';
 import { CreateTransportService } from '../../../core/services/create-transport.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { SubscriptionTypesService } from '../../../core/services/subscription-types.service';
+import { ProcessingComponent } from "../../../shared/components/processing.component";
 
 @Component({
   selector: 'app-create-transport',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ProcessingComponent],
   templateUrl: './create-transport.component.html',
 })
 export class CreateTransportComponent implements OnInit {
   rForm: FormGroup;
   request_id!: string;
   subscriptionTypes: SubscriptionTypes[] = [];
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private createTransportService: CreateTransportService,
-    private subscriptionTypesService: SubscriptionTypesService
+    private subscriptionTypesService: SubscriptionTypesService,
+    private location: Location
   ) {
     this.rForm = this.fb.group({
       name: ['', Validators.required],
@@ -56,15 +59,19 @@ export class CreateTransportComponent implements OnInit {
 
   onSubmit(): void {
     if (this.rForm.valid) {
+      this.loading = true; // Start loading
       const formData = this.rForm.value;
       this.createTransportService
         .createTransport(this.request_id, formData)
         .subscribe({
           next: () => {
-            alert('Transport created successfully!');
+            this.loading = false; // Stop loading
+            this.location.back();
+            this.rForm.reset();
           },
           error: (err) => {
-            alert('Error: ' + err.error.message);
+            this.loading = false; // Stop loading
+            console.log('Error: ' + err.error.message);
           },
         });
     } else {

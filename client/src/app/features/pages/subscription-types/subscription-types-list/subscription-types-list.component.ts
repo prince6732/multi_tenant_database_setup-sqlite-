@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SubscriptionTypesFormComponent } from '../subscription-types-form/subscription-types-form.component';
+import { SweetalertComponent } from '../../../../shared/components/sweetalert.component';
 
 @Component({
   selector: 'app-subscription-types-list',
@@ -22,7 +23,10 @@ export class SubscriptionTypesListComponent {
   editModal: SubscriptionTypes | null = null;
   showCompletionModal = false;
 
-  constructor(private subscriptionTypesService: SubscriptionTypesService) {}
+  constructor(
+    private subscriptionTypesService: SubscriptionTypesService,
+    private sweetalertComponent: SweetalertComponent
+  ) {}
 
   ngOnInit(): void {
     this.getAllSubscriptionTypes();
@@ -55,5 +59,31 @@ export class SubscriptionTypesListComponent {
     event.stopPropagation();
     this.editModal = subscriptionTypes;
     this.showCompletionModal = true;
+  }
+
+  deleteSubscriptionType(id: number): void {
+    this.sweetalertComponent
+      .confirmDelete('Are You Sure! You want to Delete this Subscription Type?')
+      .then((result) => {
+        if (result.isConfirmed) {
+          this.subscriptionTypesService.deleteSubscriptionType(id).subscribe({
+            next: () => {
+              this.getAllSubscriptionTypes();
+              this.sweetalertComponent.showToast(
+                'The Subscription Type has been Deleted',
+                'success',
+                2000
+              );
+            },
+            error: (err) => {
+              this.sweetalertComponent.showToast(
+                err.error.message,
+                'error',
+                2000
+              );
+            },
+          });
+        }
+      });
   }
 }

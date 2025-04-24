@@ -12,9 +12,9 @@ transportRouter.get(
   transportController.getFreshTransportRequests
 );
 
-transportRouter.get(
-  "/api/transport-requests/:request_id",
-  transportController.getTransportRequestById
-);
+transportRouter
+  .route("/api/transport-requests/:request_id")
+  .get(transportController.getTransportRequestById)
+  .delete(transportController.deleteTransportRequest);
 
 module.exports = transportRouter;

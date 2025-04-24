@@ -20,16 +20,16 @@ const routes: Routes = [
         path: 'locations',
         loadComponent: () =>
           import(
-            '../../../features/pages/location-management/states/states.component'
-          ).then((m) => m.StatesComponent),
+            '../../../features/pages/location-management/states/states-list/states-list.component'
+          ).then((m) => m.StatesListComponent),
         canActivate: [authGuard],
       },
       {
         path: 'locations/:state_id/cities',
         loadComponent: () =>
           import(
-            '../../../features/pages/location-management/state-cities/state-cities.component'
-          ).then((m) => m.StateCitiesComponent),
+            '../../../features/pages/location-management/cities-by-state/cities-list/cities-list.component'
+          ).then((m) => m.CitiesListComponent),
         canActivate: [authGuard],
       },
       {
